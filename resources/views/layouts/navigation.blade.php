@@ -12,9 +12,31 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+
+                    <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
+                        {{ __('Home') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('tutors.index')" :active="request()->routeIs('tutors.*')">
+                        {{ __('Find Tutors') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('requests.browse')" :active="request()->routeIs('requests.browse')">
+                        {{ __('Browse Requests') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('skill-exchanges.index')" :active="request()->routeIs('skill-exchanges.*')">
+                        {{ __('Skill Exchange') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('messages.index')" :active="request()->routeIs('messages.*')">
+                        {{ __('Messages') }}
+                    </x-nav-link>
+
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
                 </div>
             </div>
 
@@ -43,7 +65,7 @@
                             @csrf
 
                             <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
+                                onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
@@ -89,7 +111,7 @@
                     @csrf
 
                     <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
+                        onclick="event.preventDefault();
                                         this.closest('form').submit();">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>

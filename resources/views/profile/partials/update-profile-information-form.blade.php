@@ -5,7 +5,7 @@
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
+            {{ __('Update your SkillLink profile information.') }}
         </p>
     </header>
 
@@ -17,23 +17,55 @@
         @csrf
         @method('patch')
 
+        {{-- Name --}}
         <div>
             <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+
+            <x-text-input
+                id="name"
+                name="name"
+                type="text"
+                class="mt-1 block w-full"
+                :value="old('name', $user->name)"
+                required
+                autofocus
+                autocomplete="name"
+            />
+
+            <x-input-error
+                class="mt-2"
+                :messages="$errors->get('name')"
+            />
         </div>
 
+        {{-- Email --}}
         <div>
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
+
+            <x-text-input
+                id="email"
+                name="email"
+                type="email"
+                class="mt-1 block w-full"
+                :value="old('email', $user->email)"
+                required
+                autocomplete="username"
+            />
+
+            <x-input-error
+                class="mt-2"
+                :messages="$errors->get('email')"
+            />
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                 <div>
                     <p class="text-sm mt-2 text-gray-800">
                         {{ __('Your email address is unverified.') }}
 
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <button
+                            form="send-verification"
+                            class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
                             {{ __('Click here to re-send the verification email.') }}
                         </button>
                     </p>
@@ -47,8 +79,90 @@
             @endif
         </div>
 
+        {{-- Location --}}
+        <div>
+            <x-input-label for="location" :value="__('Location')" />
+
+            <x-text-input
+                id="location"
+                name="location"
+                type="text"
+                class="mt-1 block w-full"
+                :value="old('location', $user->location)"
+                placeholder="e.g. Yaoundé"
+                required
+                autocomplete="address-level2"
+            />
+
+            <x-input-error
+                class="mt-2"
+                :messages="$errors->get('location')"
+            />
+        </div>
+
+        {{-- Bio --}}
+        <div>
+            <x-input-label for="bio" :value="__('Bio')" />
+
+            <textarea
+                id="bio"
+                name="bio"
+                rows="4"
+                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                placeholder="Tell other SkillLink users a little about yourself..."
+            >{{ old('bio', $user->bio) }}</textarea>
+
+            <x-input-error
+                class="mt-2"
+                :messages="$errors->get('bio')"
+            />
+        </div>
+
+        {{-- Role --}}
+        <div>
+            <x-input-label for="role" :value="__('I want to')" />
+
+            <select
+                id="role"
+                name="role"
+                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                required
+            >
+                <option value="">Select your role</option>
+
+                <option
+                    value="learn"
+                    {{ old('role', $user->role) === 'learn' ? 'selected' : '' }}
+                >
+                    Learn
+                </option>
+
+                <option
+                    value="teach"
+                    {{ old('role', $user->role) === 'teach' ? 'selected' : '' }}
+                >
+                    Teach
+                </option>
+
+                <option
+                    value="both"
+                    {{ old('role', $user->role) === 'both' ? 'selected' : '' }}
+                >
+                    Both
+                </option>
+            </select>
+
+            <x-input-error
+                class="mt-2"
+                :messages="$errors->get('role')"
+            />
+        </div>
+
+        {{-- Save --}}
         <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <x-primary-button>
+                {{ __('Save') }}
+            </x-primary-button>
 
             @if (session('status') === 'profile-updated')
                 <p
@@ -57,7 +171,9 @@
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
                     class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
+                >
+                    {{ __('Saved.') }}
+                </p>
             @endif
         </div>
     </form>
