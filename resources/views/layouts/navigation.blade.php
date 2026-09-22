@@ -33,10 +33,21 @@
                         {{ __('Messages') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('notifications.index')" :active="request()->routeIs('notifications.*')">
+                        <span class="flex items-center gap-2">
+                            {{ __('Notifications') }}
+
+                            @if (auth()->user()->unreadNotifications()->count() > 0)
+                            <span class="inline-flex min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 py-0.5 text-xs font-bold text-white">
+                                {{ auth()->user()->unreadNotifications()->count() }}
+                            </span>
+                            @endif
+                        </span>
+                    </x-nav-link>
+
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-
                 </div>
             </div>
 
@@ -89,6 +100,26 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">
+                {{ __('Home') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('tutors.index')" :active="request()->routeIs('tutors.*')">
+                {{ __('Find Tutors') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('requests.browse')" :active="request()->routeIs('requests.browse')">
+                {{ __('Browse Requests') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('skill-exchanges.index')" :active="request()->routeIs('skill-exchanges.*')">
+                {{ __('Skill Exchange') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('messages.index')" :active="request()->routeIs('messages.*')">
+                {{ __('Messages') }}
+            </x-responsive-nav-link>
+
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>

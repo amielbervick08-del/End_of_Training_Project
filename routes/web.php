@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MessageController;
@@ -91,7 +92,16 @@ Route::middleware('auth')->group(function () {
         ->name('messages.store');
 
     Route::get('/skills', [SkillController::class, 'index'])
-    ->name('skills.browse');    
+        ->name('skills.browse');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('notifications.index');
+
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'read'])
+        ->name('notifications.read');
+
+    Route::patch('/notifications/read-all', [NotificationController::class, 'readAll'])
+        ->name('notifications.read-all');
 });
 Route::patch('/requests/{learningRequest}/cancel', [LearningRequestController::class, 'cancel'])
     ->name('requests.cancel');

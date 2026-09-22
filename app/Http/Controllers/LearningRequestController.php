@@ -62,58 +62,58 @@ class LearningRequestController extends Controller
      * Display a specific learning request.
      */
     public function show(LearningRequest $learningRequest)
-{
-    abort_unless(
-        $learningRequest->user_id === auth()->id()
-        || $learningRequest->status === 'open',
-        403
-    );
-
-    $learningRequest->load([
-        'skill',
-        'user',
-        'offers.tutor',
-        'bookings.student',
-        'bookings.tutor',
-    ]);
-
-    $existingOffer = $learningRequest->offers
-        ->where('tutor_id', auth()->id())
-        ->first();
-
-    $matchingService = new \App\Services\TutorMatchingService();
-
-    $matchingTutors = \App\Models\User::where('id', '!=', $learningRequest->user_id)
-    ->whereHas('userSkills', function ($query) use ($learningRequest) {
-        $query->where('skill_id', $learningRequest->skill_id)
-            ->where('type', 'teach');
-    })
-    ->with([
-        'userSkills' => function ($query) {
-            $query->where('type', 'teach')
-                ->with('skill');
-        },
-        'reviewsReceived',
-        'availabilities',
-    ])
-    ->get()
-    ->map(function ($tutor) use ($learningRequest, $matchingService) {
-        $tutor->match_score = $matchingService->calculateMatchScore(
-            $learningRequest,
-            $tutor
+    {
+        abort_unless(
+            $learningRequest->user_id === auth()->id()
+                || $learningRequest->status === 'open',
+            403
         );
 
-        return $tutor;
-    })
-    ->sortByDesc('match_score')
-    ->values();
+        $learningRequest->load([
+            'skill',
+            'user',
+            'offers.tutor',
+            'bookings.student',
+            'bookings.tutor',
+        ]);
 
-    return view('requests.show', compact(
-        'learningRequest',
-        'existingOffer',
-        'matchingTutors'
-    ));
-}
+        $existingOffer = $learningRequest->offers
+            ->where('tutor_id', auth()->id())
+            ->first();
+
+        $matchingService = new \App\Services\TutorMatchingService();
+
+        $matchingTutors = \App\Models\User::where('id', '!=', $learningRequest->user_id)
+            ->whereHas('userSkills', function ($query) use ($learningRequest) {
+                $query->where('skill_id', $learningRequest->skill_id)
+                    ->where('type', 'teach');
+            })
+            ->with([
+                'userSkills' => function ($query) {
+                    $query->where('type', 'teach')
+                        ->with('skill');
+                },
+                'reviewsReceived',
+                'availabilities',
+            ])
+            ->get()
+            ->map(function ($tutor) use ($learningRequest, $matchingService) {
+                $tutor->match_score = $matchingService->calculateMatchScore(
+                    $learningRequest,
+                    $tutor
+                );
+
+                return $tutor;
+            })
+            ->sortByDesc('match_score')
+            ->values();
+
+        return view('requests.show', compact(
+            'learningRequest',
+            'existingOffer',
+            'matchingTutors'
+        ));
+    }
     /**
      * Show the form for editing a learning request.
      */
@@ -157,34 +157,50 @@ class LearningRequestController extends Controller
             ->with('success', 'Learning request updated successfully.');
     }
     /**
- * Cancel a learning request.
- */
-public function cancel(LearningRequest $learningRequest)
-{
-    abort_unless(
-    $learningRequest->user_id === auth()->id() ||
-    $learningRequest->status === 'open',
-    403
-);
+     * Cancel a learning request.
+     */
+    public function cancel(LearningRequest $learningRequest)
+    {
+        abort_unless(
+            $learningRequest->user_id === auth()->id() ||
+                $learningRequest->status === 'open',
+            403
+        );
 
-    $learningRequest->update([
-        'status' => 'cancelled',
-    ]);
+        $learningRequest->update([
+            'status' => 'cancelled',
+        ]);
 
-    return redirect()
-        ->route('requests.show', $learningRequest)
-        ->with('success', 'Learning request cancelled successfully.');
-}
-/**
- * Display open learning requests for tutors.
- */
-public function browse()
-{
-    $requests = LearningRequest::where('status', 'open')
-        ->with(['user', 'skill'])
-        ->latest()
-        ->get();
+        return redirect()
+            ->route('requests.show', $learningRequest)
+            ->with('success', 'Learning request cancelled successfully.');
+    }
+    /**
+     * Display open learning requests for tutors.
+     */
+    public function browse(Request $request)
+    {
+        $skillId = $request->input('skill_id');
+        $location = $request->input('location');
 
-    return view('requests.browse', compact('requests'));
-}
+        $requests = LearningRequest::where('status', 'open')
+            ->with(['user', 'skill'])
+            ->when($skillId, function ($query) use ($skillId) {
+                $query->where('skill_id', $skillId);
+            })
+            ->when($location, function ($query) use ($location) {
+                $query->where('location', 'like', '%' . $location . '%');
+            })
+            ->latest()
+            ->get();
+
+        $skills = Skill::orderBy('name')->get();
+
+        return view('requests.browse', compact(
+            'requests',
+            'skills',
+            'skillId',
+            'location'
+        ));
+    }
 }

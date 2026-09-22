@@ -14,8 +14,7 @@
 
             <a
                 href="{{ route('requests.create') }}"
-                class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow-md"
-            >
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow-md">
                 + Post a Request
             </a>
         </div>
@@ -60,6 +59,72 @@
 
             </div>
 
+            {{-- Filters --}}
+            <div class="mb-8 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <form method="GET" action="{{ route('requests.browse') }}">
+                    <div class="grid gap-4 md:grid-cols-3">
+
+                        {{-- Skill --}}
+                        <div>
+                            <label
+                                for="skill_id"
+                                class="mb-2 block text-sm font-semibold text-gray-700">
+                                Skill
+                            </label>
+
+                            <select
+                                id="skill_id"
+                                name="skill_id"
+                                class="w-full rounded-xl border-gray-300 px-4 py-3 text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">All skills</option>
+
+                                @foreach ($skills as $skill)
+                                <option
+                                    value="{{ $skill->id }}"
+                                    @selected((string) $skillId===(string) $skill->id)
+                                    >
+                                    {{ $skill->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Location --}}
+                        <div>
+                            <label
+                                for="location"
+                                class="mb-2 block text-sm font-semibold text-gray-700">
+                                Location
+                            </label>
+
+                            <input
+                                id="location"
+                                type="text"
+                                name="location"
+                                value="{{ $location }}"
+                                placeholder="e.g. Yaounde"
+                                class="w-full rounded-xl border-gray-300 px-4 py-3 text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        {{-- Buttons --}}
+                        <div class="flex items-end gap-3">
+                            <button
+                                type="submit"
+                                class="flex-1 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700">
+                                Apply Filters
+                            </button>
+
+                            <a
+                                href="{{ route('requests.browse') }}"
+                                class="rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50">
+                                Clear
+                            </a>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
 
             {{-- Section heading --}}
             <div class="mb-5 flex items-end justify-between gap-4">
@@ -76,10 +141,10 @@
 
                 @if (!$requests->isEmpty())
 
-                    <div class="hidden rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 sm:block">
-                        {{ $requests->count() }}
-                        {{ Str::plural('request', $requests->count()) }}
-                    </div>
+                <div class="hidden rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 sm:block">
+                    {{ $requests->count() }}
+                    {{ Str::plural('request', $requests->count()) }}
+                </div>
 
                 @endif
 
@@ -89,187 +154,185 @@
             {{-- Empty state --}}
             @if ($requests->isEmpty())
 
-                <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100">
+            <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100">
 
-                    <div class="flex flex-col items-center px-6 py-14 text-center">
+                <div class="flex flex-col items-center px-6 py-14 text-center">
 
-                        <div class="flex h-20 w-20 items-center justify-center rounded-3xl bg-indigo-50 text-4xl">
-                            🔎
-                        </div>
-
-                        <h3 class="mt-6 text-xl font-bold text-gray-900">
-                            No open requests yet
-                        </h3>
-
-                        <p class="mt-2 max-w-md text-sm leading-6 text-gray-500">
-                            There are currently no students looking for help.
-                            Check back later to discover new learning opportunities.
-                        </p>
-
-                        <a
-                            href="{{ route('requests.index') }}"
-                            class="mt-6 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
-                        >
-                            View My Requests
-                        </a>
-
+                    <div class="flex h-20 w-20 items-center justify-center rounded-3xl bg-indigo-50 text-4xl">
+                        🔎
                     </div>
+
+                    <h3 class="mt-6 text-xl font-bold text-gray-900">
+                        No open requests yet
+                    </h3>
+
+                    <p class="mt-2 max-w-md text-sm leading-6 text-gray-500">
+                        There are currently no students looking for help.
+                        Check back later to discover new learning opportunities.
+                    </p>
+
+                    <a
+                        href="{{ route('requests.index') }}"
+                        class="mt-6 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700">
+                        View My Requests
+                    </a>
 
                 </div>
 
+            </div>
+
             @else
 
-                {{-- Request cards --}}
-                <div class="space-y-5">
+            {{-- Request cards --}}
+            <div class="space-y-5">
 
-                    @foreach ($requests as $request)
+                @foreach ($requests as $request)
 
-                        <div class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:shadow-md">
+                <div class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:shadow-md">
 
-                            <div class="p-5 sm:p-6">
+                    <div class="p-5 sm:p-6">
 
-                                {{-- Card top --}}
-                                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        {{-- Card top --}}
+                        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 
-                                    <div class="min-w-0">
+                            <div class="min-w-0">
 
-                                        {{-- Badges --}}
-                                        <div class="flex flex-wrap items-center gap-2">
+                                {{-- Badges --}}
+                                <div class="flex flex-wrap items-center gap-2">
 
-                                            <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
-                                                {{ $request->skill->name }}
-                                            </span>
+                                    <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                                        {{ $request->skill->name }}
+                                    </span>
 
-                                            <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                                                Open
-                                            </span>
-
-                                        </div>
-
-                                        {{-- Title --}}
-                                        <h3 class="mt-3 text-xl font-bold text-gray-900 transition group-hover:text-indigo-600">
-                                            {{ $request->title }}
-                                        </h3>
-
-                                        {{-- Student --}}
-                                        <p class="mt-2 text-sm text-gray-500">
-                                            Requested by
-                                            <span class="font-semibold text-gray-700">
-                                                {{ $request->user->name }}
-                                            </span>
-                                        </p>
-
-                                    </div>
-
-                                    <div class="shrink-0 text-sm text-gray-400">
-                                        #{{ $request->id }}
-                                    </div>
+                                    <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                                        Open
+                                    </span>
 
                                 </div>
 
+                                {{-- Title --}}
+                                <h3 class="mt-3 text-xl font-bold text-gray-900 transition group-hover:text-indigo-600">
+                                    {{ $request->title }}
+                                </h3>
 
-                                {{-- Description --}}
-                                <p class="mt-4 line-clamp-3 leading-6 text-gray-600">
-                                    {{ $request->description }}
+                                {{-- Student --}}
+                                <p class="mt-2 text-sm text-gray-500">
+                                    Requested by
+                                    <span class="font-semibold text-gray-700">
+                                        {{ $request->user->name }}
+                                    </span>
                                 </p>
 
+                            </div>
 
-                                {{-- Request details --}}
-                                <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                            <div class="shrink-0 text-sm text-gray-400">
+                                #{{ $request->id }}
+                            </div>
 
-                                    {{-- Location --}}
-                                    <div class="rounded-xl bg-gray-50 p-4">
-
-                                        <div class="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-400">
-                                            📍 Location
-                                        </div>
-
-                                        <p class="mt-1.5 text-sm font-semibold text-gray-800">
-                                            {{ $request->location }}
-                                        </p>
-
-                                    </div>
+                        </div>
 
 
-                                    {{-- Session --}}
-                                    <div class="rounded-xl bg-gray-50 p-4">
-
-                                        <div class="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-400">
-                                            💻 Session
-                                        </div>
-
-                                        <p class="mt-1.5 text-sm font-semibold text-gray-800">
-                                            {{ ucwords(str_replace('_', ' ', $request->session_type)) }}
-                                        </p>
-
-                                    </div>
+                        {{-- Description --}}
+                        <p class="mt-4 line-clamp-3 leading-6 text-gray-600">
+                            {{ $request->description }}
+                        </p>
 
 
-                                    {{-- Duration --}}
-                                    <div class="rounded-xl bg-gray-50 p-4">
+                        {{-- Request details --}}
+                        <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
 
-                                        <div class="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-400">
-                                            ⏱ Duration
-                                        </div>
+                            {{-- Location --}}
+                            <div class="rounded-xl bg-gray-50 p-4">
 
-                                        <p class="mt-1.5 text-sm font-semibold text-gray-800">
-                                            {{ $request->duration }} minutes
-                                        </p>
-
-                                    </div>
-
-
-                                    {{-- Preferred time --}}
-                                    <div class="rounded-xl bg-gray-50 p-4">
-
-                                        <div class="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-400">
-                                            📅 Preferred Time
-                                        </div>
-
-                                        <p class="mt-1.5 text-sm font-semibold text-gray-800">
-
-                                            @if ($request->preferred_date)
-                                                {{ $request->preferred_date->format('M d, Y') }}
-                                            @else
-                                                Flexible
-                                            @endif
-
-                                            @if ($request->preferred_time)
-                                                <span class="block text-xs font-medium text-gray-500">
-                                                    {{ \Carbon\Carbon::parse($request->preferred_time)->format('g:i A') }}
-                                                </span>
-                                            @endif
-
-                                        </p>
-
-                                    </div>
-
+                                <div class="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-400">
+                                    📍 Location
                                 </div>
 
+                                <p class="mt-1.5 text-sm font-semibold text-gray-800">
+                                    {{ $request->location }}
+                                </p>
 
-                                {{-- Footer --}}
-                                <div class="mt-6 flex flex-col gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                            </div>
 
-                                    <div class="text-xs text-gray-400">
-                                        Posted {{ $request->created_at->diffForHumans() }}
-                                    </div>
 
-                                    <a
-                                        href="{{ route('requests.show', $request) }}"
-                                        class="inline-flex items-center justify-center rounded-xl bg-indigo-50 px-4 py-2.5 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100"
-                                    >
-                                        View Request →
-                                    </a>
+                            {{-- Session --}}
+                            <div class="rounded-xl bg-gray-50 p-4">
 
+                                <div class="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-400">
+                                    💻 Session
                                 </div>
+
+                                <p class="mt-1.5 text-sm font-semibold text-gray-800">
+                                    {{ ucwords(str_replace('_', ' ', $request->session_type)) }}
+                                </p>
+
+                            </div>
+
+
+                            {{-- Duration --}}
+                            <div class="rounded-xl bg-gray-50 p-4">
+
+                                <div class="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-400">
+                                    ⏱ Duration
+                                </div>
+
+                                <p class="mt-1.5 text-sm font-semibold text-gray-800">
+                                    {{ $request->duration }} minutes
+                                </p>
+
+                            </div>
+
+
+                            {{-- Preferred time --}}
+                            <div class="rounded-xl bg-gray-50 p-4">
+
+                                <div class="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-400">
+                                    📅 Preferred Time
+                                </div>
+
+                                <p class="mt-1.5 text-sm font-semibold text-gray-800">
+
+                                    @if ($request->preferred_date)
+                                    {{ $request->preferred_date->format('M d, Y') }}
+                                    @else
+                                    Flexible
+                                    @endif
+
+                                    @if ($request->preferred_time)
+                                    <span class="block text-xs font-medium text-gray-500">
+                                        {{ \Carbon\Carbon::parse($request->preferred_time)->format('g:i A') }}
+                                    </span>
+                                    @endif
+
+                                </p>
 
                             </div>
 
                         </div>
 
-                    @endforeach
+
+                        {{-- Footer --}}
+                        <div class="mt-6 flex flex-col gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+
+                            <div class="text-xs text-gray-400">
+                                Posted {{ $request->created_at->diffForHumans() }}
+                            </div>
+
+                            <a
+                                href="{{ route('requests.show', $request) }}"
+                                class="inline-flex items-center justify-center rounded-xl bg-indigo-50 px-4 py-2.5 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100">
+                                View Request →
+                            </a>
+
+                        </div>
+
+                    </div>
 
                 </div>
+
+                @endforeach
+
+            </div>
 
             @endif
 
@@ -277,32 +340,31 @@
             {{-- Bottom CTA --}}
             @if (!$requests->isEmpty())
 
-                <div class="mt-8 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100">
+            <div class="mt-8 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100">
 
-                    <div class="flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+                <div class="flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
 
-                        <div>
+                    <div>
 
-                            <h2 class="text-lg font-bold text-gray-900">
-                                See a request you can help with?
-                            </h2>
+                        <h2 class="text-lg font-bold text-gray-900">
+                            See a request you can help with?
+                        </h2>
 
-                            <p class="mt-1 text-sm text-gray-500">
-                                Open the request to learn more about what the student needs.
-                            </p>
-
-                        </div>
-
-                        <a
-                            href="{{ route('requests.index') }}"
-                            class="inline-flex shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
-                        >
-                            My Learning Requests
-                        </a>
+                        <p class="mt-1 text-sm text-gray-500">
+                            Open the request to learn more about what the student needs.
+                        </p>
 
                     </div>
 
+                    <a
+                        href="{{ route('requests.index') }}"
+                        class="inline-flex shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50">
+                        My Learning Requests
+                    </a>
+
                 </div>
+
+            </div>
 
             @endif
 

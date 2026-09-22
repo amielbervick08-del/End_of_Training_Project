@@ -75,6 +75,13 @@ class MessageController extends Controller
             'is_read' => false,
         ]);
 
+        $user->notify(new \App\Notifications\SkillLinkNotification(
+    'message',
+    'New Message',
+    auth()->user()->name . ' sent you a new message.',
+    route('messages.show', auth()->user())
+));
+
         return redirect()
             ->route('messages.show', $user)
             ->with('success', 'Message sent successfully.');
